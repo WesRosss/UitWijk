@@ -37,7 +37,8 @@ services:
     container_name: tennis-database
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./docker/postgres/01-create-user-db.sql:/docker-entrypoint-initdb.d/01-create-user-db.sql
+      - ./docker/postgres/02-create-schema.sql:/docker-entrypoint-initdb.d/02-create-schema.sql
     environment:
       - POSTGRES_DB=tennis_db
       - POSTGRES_USER=tennis_user
