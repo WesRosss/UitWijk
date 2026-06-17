@@ -78,16 +78,20 @@ module.exports = defineConfig({
   
   // Chain webpack configuration
   chainWebpack: config => {
-    // Add alias for @
+    // Determine the correct source path (works in both local and Docker environments)
+    const srcPath = require('path').resolve(__dirname, 'src')
+    
+    // Add alias for @ and src
     config.resolve.alias
-      .set('@', require('path').resolve(__dirname, 'src'))
-      .set('@components', require('path').resolve(__dirname, 'src/components'))
-      .set('@views', require('path').resolve(__dirname, 'src/views'))
-      .set('@store', require('path').resolve(__dirname, 'src/store'))
-      .set('@router', require('path').resolve(__dirname, 'src/router'))
-      .set('@services', require('path').resolve(__dirname, 'src/services'))
-      .set('@utils', require('path').resolve(__dirname, 'src/utils'))
-      .set('@styles', require('path').resolve(__dirname, 'src/styles'))
+      .set('@', srcPath)
+      .set('src', srcPath)
+      .set('@components', require('path').resolve(srcPath, 'components'))
+      .set('@views', require('path').resolve(srcPath, 'views'))
+      .set('@store', require('path').resolve(srcPath, 'store'))
+      .set('@router', require('path').resolve(srcPath, 'router'))
+      .set('@services', require('path').resolve(srcPath, 'services'))
+      .set('@utils', require('path').resolve(srcPath, 'utils'))
+      .set('@styles', require('path').resolve(srcPath, 'styles'))
     
     // Configure svg loader
     const svgRule = config.module.rule('svg')
