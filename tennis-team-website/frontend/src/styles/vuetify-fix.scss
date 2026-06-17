@@ -1,0 +1,10 @@
+// Fix for Vuetify Sass compatibility issue with Dart Sass
+// This file must be imported BEFORE Vuetify's styles
+
+// Override the problematic $divider-margin variable
+// Vuetify tries to multiply a list (16px 0) by 2, which Dart Sass doesn't support
+// We define it as a single value to avoid the list multiplication issue
+$divider-margin: 16px;
+
+// Manually set the calculated value that Vuetify expects
+$divider-vertical-inset-max-height: calc(100% - (16px * 2)) !default;
