@@ -4,38 +4,51 @@ import * as directives from 'vuetify/directives'
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
 import 'vuetify/styles'
 
-// Custom theme colors
+// TV UitWijk Brand Colors
+// Primary: Deep Red (#C41E3A) - Main brand color
+// Secondary: Navy Blue (#003366) - Accent color  
+// Accent: Gold (#FFD700) - Highlight color
+
+// Custom theme colors for TV UitWijk
 const customLightTheme = {
   dark: false,
   colors: {
-    primary: '#1976D2',
-    secondary: '#424242',
-    accent: '#82B1FF',
-    error: '#FF5252',
-    info: '#2196F3',
+    primary: '#C41E3A',      // TV UitWijk Red
+    secondary: '#003366',    // TV UitWijk Navy Blue
+    accent: '#FFD700',       // TV UitWijk Gold
+    error: '#D32F2F',
+    info: '#1976D2',
     success: '#4CAF50',
-    warning: '#FFC107',
+    warning: '#FF9800',
     background: '#F5F5F5',
     surface: '#FFFFFF',
-    'primary-darken-1': '#1565C0',
-    'secondary-darken-1': '#212121',
+    'primary-darken-1': '#A0152D',
+    'secondary-darken-1': '#001933',
+    'accent-darken-1': '#FFA000',
+    'on-primary': '#FFFFFF',
+    'on-secondary': '#FFFFFF',
+    'on-accent': '#000000',
   },
 }
 
 const customDarkTheme = {
   dark: true,
   colors: {
-    primary: '#2196F3',
-    secondary: '#424242',
-    accent: '#82B1FF',
+    primary: '#E53935',      // Lighter red for dark mode
+    secondary: '#1976D2',    // Lighter blue for dark mode
+    accent: '#FFD700',       // Gold stays the same
     error: '#FF5252',
     info: '#2196F3',
-    success: '#4CAF50',
+    success: '#81C784',
     warning: '#FFC107',
     background: '#121212',
     surface: '#1E1E1E',
-    'primary-darken-1': '#1976D2',
-    'secondary-darken-1': '#000000',
+    'primary-darken-1': '#C41E3A',
+    'secondary-darken-1': '#003366',
+    'accent-darken-1': '#FFA000',
+    'on-primary': '#FFFFFF',
+    'on-secondary': '#FFFFFF',
+    'on-accent': '#000000',
   },
 }
 

@@ -1,5 +1,3 @@
-version: '3.8'
-
 # Docker Compose configuration for Tennis Team Website
 # Apache2 runs on the HOST MACHINE as reverse proxy
 # This file only contains the application services

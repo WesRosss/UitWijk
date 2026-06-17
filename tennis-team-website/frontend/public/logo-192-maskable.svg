@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <!-- Maskable version - solid color for icon mask -->
+  <circle cx="96" cy="96" r="90" fill="#C41E3A" />
+  
+  <!-- TV text in white for contrast -->
+  <text x="96" y="85" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="white" text-anchor="middle">TV</text>
+  <text x="96" y="110" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="white" text-anchor="middle">UitWijk</text>
+</svg>

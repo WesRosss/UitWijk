@@ -12,14 +12,20 @@
       <template v-slot:prepend>
         <v-list-item two-line>
           <v-list-item-avatar color="white">
-            <v-icon color="primary" large>mdi-tennis</v-icon>
+            <v-img
+              v-if="logoUrl"
+              :src="logoUrl"
+              contain
+              max-height="40"
+            />
+            <v-icon v-else color="primary" large>mdi-tennis</v-icon>
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title class="text-h6 white--text">
-              Tennis Team
+              TV UitWijk
             </v-list-item-title>
             <v-list-item-subtitle class="white--text">
-              Competition Management
+              Tennis Team
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -89,7 +95,7 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       
       <v-toolbar-title class="text-h6">
-        <span class="hidden-sm-and-down">Tennis Team Management</span>
+        <span class="hidden-sm-and-down">TV UitWijk Tennis Team</span>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -153,7 +159,7 @@
       <!-- Notifications -->
       <v-btn icon @click="toggleNotifications" v-if="isAuthenticated">
         <v-badge
-          color="red"
+          color="accent"
           :content="unreadNotifications"
           :value="unreadNotifications"
           overlap
@@ -175,7 +181,7 @@
     <!-- Footer -->
     <v-footer app color="primary" dark class="text-center py-2">
       <v-container>
-        <span>&copy; {{ new Date().getFullYear() }} Tennis Team. All rights reserved.</span>
+        <span>&copy; {{ new Date().getFullYear() }} TV UitWijk Tennis Team. All rights reserved.</span>
         <v-spacer></v-spacer>
         <span class="text-caption">v1.0.0</span>
       </v-container>
@@ -209,7 +215,7 @@
           <v-list-item
             v-for="notification in notifications"
             :key="notification.id"
-            :class="{'unread': !notification.is_read}"
+            :class="{ 'unread': !notification.is_read }"
             @click="readNotification(notification)"
           >
             <v-list-item-avatar :color="notification.is_read ? 'grey' : 'primary'">
@@ -296,6 +302,7 @@ export default {
     const drawer = ref(true)
     const miniDrawer = ref(false)
     const notificationsDrawer = ref(false)
+    const logoUrl = ref('/logo-192.png')
     
     // Navigation items based on user role
     const navItems = computed(() => {
@@ -409,6 +416,7 @@ export default {
       drawer,
       miniDrawer,
       notificationsDrawer,
+      logoUrl,
       navItems,
       userName,
       userInitials,
@@ -437,12 +445,12 @@ export default {
 
 .notifications-drawer {
   .v-list-item.unread {
-    background-color: rgba(0, 0, 0, 0.05);
-    border-left: 3px solid #1976D2;
+    background-color: rgba(196, 30, 58, 0.05);
+    border-left: 3px solid #C41E3A;
   }
   
   .v-list-item.unread:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(196, 30, 58, 0.1);
   }
 }
 

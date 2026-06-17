@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Maskable version - solid color for icon mask -->
+  <circle cx="256" cy="256" r="240" fill="#C41E3A" />
+  
+  <!-- TV UitWijk text in white for contrast -->
+  <text x="256" y="220" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="white" text-anchor="middle">TV</text>
+  <text x="256" y="280" font-family="Arial, sans-serif" font-size="52" font-weight="bold" fill="white" text-anchor="middle">UitWijk</text>
+  
+  <!-- Tennis Team text -->
+  <text x="256" y="340" font-family="Arial, sans-serif" font-size="28" fill="white" text-anchor="middle">Tennis Team</text>
+</svg>
