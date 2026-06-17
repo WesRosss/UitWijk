@@ -15,5 +15,5 @@ COPY frontend/ /app/
 # Expose port for development
 EXPOSE 8080
 
-# Command to run the development server
-CMD ["npm", "run", "serve"]
+# Command to run the development server on port 8081
+CMD ["npm", "run", "serve", "--", "--port", "8081"]
