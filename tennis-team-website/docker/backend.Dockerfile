@@ -26,14 +26,16 @@ RUN pip install --upgrade pip && \
 
 # Copy backend code
 COPY backend/ /app/
-COPY config/ /app/config/
+
+# Create config directory if it doesn't exist
+RUN mkdir -p /app/config
 
 # Create directories for static and media files
 RUN mkdir -p /app/static /app/media
 
 # Set permissions
-RUN chown -R www-data:www-data /app/static /app/media
-RUN chmod -R 755 /app/static /app/media
+RUN chown -R www-data:www-data /app/static /app/media /app/config
+RUN chmod -R 755 /app/static /app/media /app/config
 
 # Expose port
 EXPOSE 8000

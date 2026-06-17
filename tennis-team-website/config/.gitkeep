@@ -1,0 +1,2 @@
+# This directory is for configuration files
+# It's used by Docker to mount configuration into containers
