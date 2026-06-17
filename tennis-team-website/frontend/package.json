@@ -1,0 +1,64 @@
+{
+  "name": "tennis-team-frontend",
+  "version": "1.0.0",
+  "description": "Vue.js frontend for Tennis Team Website",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "test:unit": "vue-cli-service test:unit",
+    "test:e2e": "vue-cli-service test:e2e"
+  },
+  "dependencies": {
+    "axios": "^1.4.0",
+    "core-js": "^3.30.0",
+    "date-fns": "^2.30.0",
+    "lodash": "^4.17.21",
+    "pinia": "^2.1.4",
+    "vue": "^3.3.4",
+    "vue-axios": "^3.5.2",
+    "vue-i18n": "^9.2.2",
+    "vue-router": "^4.2.0",
+    "vuetify": "^3.3.0"
+  },
+  "devDependencies": {
+    "@mdi/font": "^7.2.96",
+    "@vitejs/plugin-vue": "^4.2.3",
+    "@vue/cli": "^5.0.8",
+    "@vue/cli-plugin-e2e-cypress": "^5.0.8",
+    "@vue/cli-plugin-eslint": "^5.0.8",
+    "@vue/cli-plugin-unit-jest": "^5.0.8",
+    "@vue/cli-service": "^5.0.8",
+    "@vue/test-utils": "^2.3.2",
+    "eslint": "^8.44.0",
+    "eslint-plugin-vue": "^9.14.0",
+    "jsdom": "^22.1.0",
+    "sass": "^1.63.4",
+    "sass-loader": "^13.3.2",
+    "vite": "^4.3.9",
+    "vitest": "^0.32.2"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "@babel/eslint-parser"
+    },
+    "rules": {
+      "vue/multi-word-component-names": "off"
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ]
+}

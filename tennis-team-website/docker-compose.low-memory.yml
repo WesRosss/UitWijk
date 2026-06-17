@@ -1,0 +1,123 @@
+version: '3.8'
+
+services:
+  # Apache2 Web Server (lightweight)
+  webserver:
+    build:
+      context: .
+      dockerfile: docker/apache.Dockerfile
+    container_name: tennis-webserver
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/apache/sites-enabled:/etc/apache2/sites-enabled
+      - ./frontend/dist:/var/www/html
+      - ./backend/static:/var/www/static
+    depends_on:
+      - backend
+    networks:
+      - tennis-network
+    restart: unless-stopped
+    mem_limit: 256m
+    memswap_limit: 256m
+
+  # Django Backend (optimized for low memory)
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+    container_name: tennis-backend
+    command: gunicorn --bind 0.0.0.0:8000 --workers 2 --threads 2 tennis_backend.wsgi:application
+    volumes:
+      - ./backend:/app
+      - ./config:/app/config
+    environment:
+      - DJANGO_SETTINGS_MODULE=tennis_backend.settings.production
+      - DATABASE_URL=postgres://tennis_user:tennis_password@database:5432/tennis_db
+      - SECRET_KEY=change-this-in-production-use-long-random-string
+      - DEBUG=False
+      - ALLOWED_HOSTS=*
+      - CORS_ALLOWED_ORIGINS=http://localhost,http://127.0.0.1
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - tennis-network
+    restart: unless-stopped
+    mem_limit: 512m
+    memswap_limit: 512m
+
+  # PostgreSQL Database (optimized)
+  database:
+    image: postgres:15-alpine
+    container_name: tennis-database
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      - POSTGRES_DB=tennis_db
+      - POSTGRES_USER=tennis_user
+      - POSTGRES_PASSWORD=tennis_password
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tennis_user -d tennis_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tennis-network
+    restart: unless-stopped
+    mem_limit: 256m
+    memswap_limit: 256m
+    command: postgres -c shared_buffers=64MB -c max_connections=20
+
+  # Redis (lightweight)
+  redis:
+    image: redis:7-alpine
+    container_name: tennis-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - tennis-network
+    restart: unless-stopped
+    mem_limit: 128m
+    memswap_limit: 128m
+    command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru
+
+  # Celery Worker (combined with beat for low memory)
+  celery:
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+    container_name: tennis-celery
+    command: celery -A tennis_backend worker --loglevel=info --concurrency=2
+    volumes:
+      - ./backend:/app
+      - ./config:/app/config
+    environment:
+      - DJANGO_SETTINGS_MODULE=tennis_backend.settings.production
+      - DATABASE_URL=postgres://tennis_user:tennis_password@database:5432/tennis_db
+      - SECRET_KEY=change-this-in-production-use-long-random-string
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      - backend
+      - database
+      - redis
+    networks:
+      - tennis-network
+    restart: unless-stopped
+    mem_limit: 256m
+    memswap_limit: 256m
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  tennis-network:
+    driver: bridge
