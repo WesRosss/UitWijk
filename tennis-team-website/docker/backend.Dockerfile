@@ -1,4 +1,5 @@
 # Django Backend Dockerfile for Tennis Team Website
+# Optimized for use with external Apache2 reverse proxy
 FROM python:3.11-slim
 
 # Set environment variables
@@ -27,15 +28,12 @@ RUN pip install --upgrade pip && \
 COPY backend/ /app/
 COPY config/ /app/config/
 
-# Create static directory
-RUN mkdir -p /app/static
-
-# Collect static files (will be done at runtime in production)
-# RUN python manage.py collectstatic --noinput
+# Create directories for static and media files
+RUN mkdir -p /app/static /app/media
 
 # Set permissions
-RUN chown -R www-data:www-data /app/static
-RUN chmod -R 755 /app/static
+RUN chown -R www-data:www-data /app/static /app/media
+RUN chmod -R 755 /app/static /app/media
 
 # Expose port
 EXPOSE 8000

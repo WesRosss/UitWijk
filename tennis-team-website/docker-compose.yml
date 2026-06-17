@@ -1,28 +1,10 @@
 version: '3.8'
 
-services:
-  # Apache2 Web Server
-  webserver:
-    build:
-      context: .
-      dockerfile: docker/apache.Dockerfile
-    container_name: tennis-webserver
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./docker/apache/ssl:/etc/apache2/ssl
-      - ./docker/apache/sites-enabled:/etc/apache2/sites-enabled
-      - ./docker/apache/logs:/var/log/apache2
-      - ./frontend/dist:/var/www/html
-      - ./backend/static:/var/www/static
-    depends_on:
-      - backend
-      - frontend
-    networks:
-      - tennis-network
-    restart: unless-stopped
+# Docker Compose configuration for Tennis Team Website
+# Apache2 runs on the host machine as reverse proxy
+# This file only contains the application services
 
+services:
   # Django Backend
   backend:
     build:
@@ -33,19 +15,23 @@ services:
     volumes:
       - ./backend:/app
       - ./config:/app/config
+      - ./backend/static:/app/static
+      - ./backend/media:/app/media
     environment:
       - DJANGO_SETTINGS_MODULE=tennis_backend.settings.production
       - DATABASE_URL=postgres://tennis_user:tennis_password@database:5432/tennis_db
-      - SECRET_KEY=${DJANGO_SECRET_KEY:-default-secret-key-change-me}
+      - SECRET_KEY=${DJANGO_SECRET_KEY:-change-this-in-production-use-long-random-string}
       - DEBUG=False
-      - ALLOWED_HOSTS=localhost,127.0.0.1,webserver
+      - ALLOWED_HOSTS=*
       - CORS_ALLOWED_ORIGINS=http://localhost,https://localhost
-    depends_on:
-      database:
-        condition: service_healthy
+    expose:
+      - "8000"
     networks:
       - tennis-network
     restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
 
   # PostgreSQL Database
   database:
@@ -58,8 +44,8 @@ services:
       - POSTGRES_DB=tennis_db
       - POSTGRES_USER=tennis_user
       - POSTGRES_PASSWORD=tennis_password
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U tennis_user -d tennis_db"]
       interval: 10s
@@ -69,7 +55,7 @@ services:
       - tennis-network
     restart: unless-stopped
 
-  # Vue.js Frontend
+  # Vue.js Frontend (development mode)
   frontend:
     build:
       context: .
@@ -78,19 +64,32 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - VUE_APP_API_URL=http://backend:8000
     command: npm run serve
+    networks:
+      - tennis-network
+    restart: unless-stopped
     depends_on:
       - backend
+
+  # Redis for Celery broker and caching
+  redis:
+    image: redis:7-alpine
+    container_name: tennis-redis
+    expose:
+      - "6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
     networks:
       - tennis-network
     restart: unless-stopped
 
-  # Celery for background tasks (notifications)
+  # Celery Worker for background tasks
   celery:
     build:
       context: .
@@ -103,26 +102,16 @@ services:
     environment:
       - DJANGO_SETTINGS_MODULE=tennis_backend.settings.production
       - DATABASE_URL=postgres://tennis_user:tennis_password@database:5432/tennis_db
-      - SECRET_KEY=${DJANGO_SECRET_KEY:-default-secret-key-change-me}
+      - SECRET_KEY=${DJANGO_SECRET_KEY:-change-this-in-production-use-long-random-string}
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    networks:
+      - tennis-network
+    restart: unless-stopped
     depends_on:
       - backend
       - database
       - redis
-    networks:
-      - tennis-network
-    restart: unless-stopped
-
-  # Redis for Celery broker
-  redis:
-    image: redis:7-alpine
-    container_name: tennis-redis
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    networks:
-      - tennis-network
-    restart: unless-stopped
 
   # Celery Beat for scheduled tasks (hourly notifications)
   celery-beat:
@@ -137,14 +126,16 @@ services:
     environment:
       - DJANGO_SETTINGS_MODULE=tennis_backend.settings.production
       - DATABASE_URL=postgres://tennis_user:tennis_password@database:5432/tennis_db
-      - SECRET_KEY=${DJANGO_SECRET_KEY:-default-secret-key-change-me}
+      - SECRET_KEY=${DJANGO_SECRET_KEY:-change-this-in-production-use-long-random-string}
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    networks:
+      - tennis-network
+    restart: unless-stopped
     depends_on:
       - backend
       - database
       - redis
-    networks:
-      - tennis-network
-    restart: unless-stopped
 
 volumes:
   postgres_data:
